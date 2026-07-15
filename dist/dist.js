@@ -1,4 +1,4 @@
-// Version: 1.0.23
+// Version: 1.0.27
 
 // --- File: config.js ---
 const CONFIG = {
@@ -126,68 +126,158 @@ function getOrCreateResultsFolder(masterDirName, dailyDirPrefix) {
  * @returns {string} A complete HTML document string.
  */
 function createHtmlTemplateFromSchema(schemas, mergedEntry) {
-  if (!schemas || !mergedEntry) {
+  if (!mergedEntry) {
     return "";
   }
 
-  // Iterate over all schemas to create card templates
-  const cardsHtml = Object.values(schemas)
-    .map(schema => {
-      const sheetName = schema.name;
-      const title = sheetName.charAt(0).toUpperCase() + sheetName.slice(1);
-      
-      const rowsHtml = Object.keys(schema.columns)
-        .map(key => {
-          const val = mergedEntry[key] !== undefined ? mergedEntry[key] : "";
-          return `
-            <tr>
-              <td class="field-label">${key}</td>
-              <td class="field-value">${val}</td>
-            </tr>
-          `;
-        })
-        .join('');
-
-      return `
-        <div class="schema-card" id="card-${sheetName}">
-          <h3 class="schema-title">${title}</h3>
-          <table class="schema-table">
-            <tbody>
-              ${rowsHtml}
-            </tbody>
-          </table>
-        </div>
-      `;
-    })
-    .join('\n');
-
-  const entryId = mergedEntry[typeof CONFIG !== 'undefined' ? CONFIG.foreignKey : 'documento'] || 'entry';
-
-  // Load the template from the separate HTML file pushed to Google Apps Script
-  let template = "";
-  try {
-    template = HtmlService.createHtmlOutputFromFile('template').getContent();
-  } catch (e) {
-    console.error("Failed to load template.html via HtmlService. Make sure template.html is pushed.", e);
-    // Fallback in case template.html is missing
-    return `<!DOCTYPE html>
+  // Load the template (injected at build time from src/template.html)
+  let template = `<!DOCTYPE html>
 <html>
 <head>
   <meta charset="utf-8">
-  <title>Record Summary - ${entryId}</title>
-  ${getHtmlStylesheet()}
+  <title>Reporte Clínico - {{Nombre}}</title>
+  <style>
+    body {
+      font-family: 'Inter', 'Roboto', Helvetica, Arial, sans-serif;
+      background-color: #ffffff;
+      color: #1e293b;
+      margin: 40px;
+      line-height: 1.6;
+    }
+    .header {
+      border-bottom: 2px solid #0f172a;
+      padding-bottom: 12px;
+      margin-bottom: 24px;
+    }
+    .header-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      color: #0f172a;
+      text-transform: uppercase;
+      margin: 0 0 5px 0;
+    }
+    .header-subtitle {
+      font-size: 0.9rem;
+      color: #64748b;
+      margin: 0;
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+    }
+    .section-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #0f172a;
+      margin-top: 24px;
+      margin-bottom: 12px;
+      border-bottom: 1px solid #e2e8f0;
+      padding-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+    .patient-info {
+      display: table;
+      width: 100%;
+      margin-bottom: 20px;
+    }
+    .info-row {
+      display: table-row;
+    }
+    .info-label {
+      display: table-cell;
+      font-weight: 600;
+      color: #475569;
+      padding: 6px 0;
+      width: 25%;
+    }
+    .info-value {
+      display: table-cell;
+      color: #0f172a;
+      padding: 6px 0;
+    }
+    .results-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+    .results-table th,
+    .results-table td {
+      padding: 10px 0;
+      text-align: left;
+      border-bottom: 1px solid #f1f5f9;
+      font-size: 0.95rem;
+    }
+    .results-table th {
+      font-weight: 600;
+      color: #475569;
+      border-bottom: 2px solid #cbd5e1;
+    }
+    .results-table td {
+      color: #0f172a;
+    }
+    .footer {
+      margin-top: 80px;
+      border-top: 1px solid #e2e8f0;
+      padding-top: 12px;
+      font-size: 0.75rem;
+      color: #94a3b8;
+      text-align: center;
+    }
+  </style>
 </head>
 <body>
-  <div class="entry-container" id="entry-${entryId}">
-    ${cardsHtml}
+  <div class="header">
+    <h1 class="header-title">Informe de Resultados</h1>
+    <h2 class="header-subtitle">Evaluación de Caracterización</h2>
+  </div>
+
+  <div class="section-title">Datos del Paciente</div>
+  <div class="patient-info">
+    <div class="info-row">
+      <div class="info-label">Nombre completo:</div>
+      <div class="info-value">{{Nombre}}</div>
+    </div>
+    <div class="info-row">
+      <div class="info-label">Documento:</div>
+      <div class="info-value">{{documento}}</div>
+    </div>
+    <div class="info-row">
+      <div class="info-label">Edad:</div>
+      <div class="info-value">{{Edad}} años</div>
+    </div>
+  </div>
+
+  <div class="section-title">Resultados de la Evaluación</div>
+  <table class="results-table">
+    <thead>
+      <tr>
+        <th>Parámetro Evaluado</th>
+        <th>Resultado</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Umbral de respuesta</td>
+        <td>{{umbral}}</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="footer">
+    Documento generado automáticamente • Marca temporal: {{marcaTemporal}}
   </div>
 </body>
-</html>`;
+</html>
+`;
+
+  // Replace placeholders dynamically for every key in the merged record
+  for (const [key, val] of Object.entries(mergedEntry)) {
+    const placeholder = new RegExp(`\\{\\{${key}\\}\\}`, 'g');
+    template = template.replace(placeholder, val !== undefined ? val : "");
   }
 
-  // Replace placeholders in the loaded HTML template
-  template = template.replace(/\{\{entryId\}\}/g, entryId);
-  template = template.replace(/\{\{cardsHtml\}\}/g, cardsHtml);
+  // Clean any unresolved double curly brace placeholders
+  template = template.replace(/\{\{\w+\}\}/g, "");
 
   return template;
 }
@@ -203,79 +293,13 @@ function createHtmlTemplateFromSchema(schemas, mergedEntry) {
  * @returns {GoogleAppsScript.Drive.File} The created PDF file.
  */
 function saveHtmlAsPdf(htmlContent, mergedEntry, fileNameKey, folder) {
-  const fileName = String(mergedEntry[fileNameKey] || 'document').trim();
+  const name = String(mergedEntry.Nombre || '').trim();
+  const doc = String(mergedEntry[fileNameKey] || '').trim();
+  const fileName = name && doc ? `${name}_${doc}` : (name || doc || 'document');
   const htmlBlob = Utilities.newBlob(htmlContent, 'text/html', `${fileName}.html`);
   const pdfBlob = htmlBlob.getAs('application/pdf').setName(`${fileName}.pdf`);
   return folder.createFile(pdfBlob);
 }
-
-/**
- * Returns a CSS stylesheet string to style the generated HTML templates.
- * 
- * @returns {string} The CSS style block.
- */
-function getHtmlStylesheet() {
-  return `
-<style>
-  body {
-    font-family: 'Outfit', 'Inter', 'Roboto', sans-serif;
-    background-color: #0f172a;
-    color: #f8fafc;
-    margin: 20px;
-  }
-  .entry-container {
-    border: 1px dashed rgba(255, 255, 255, 0.15);
-    border-radius: 20px;
-    padding: 16px;
-    margin-bottom: 32px;
-    background: rgba(15, 23, 42, 0.4);
-  }
-  .schema-card {
-    background: rgba(30, 41, 59, 0.7);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 16px;
-    padding: 24px;
-    margin-bottom: 24px;
-    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
-  }
-  .schema-title {
-    margin-top: 0;
-    margin-bottom: 16px;
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: #38bdf8;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    padding-bottom: 8px;
-  }
-  .schema-table {
-    width: 100%;
-    border-collapse: collapse;
-  }
-  .schema-table td {
-    padding: 8px 12px;
-    font-size: 0.95rem;
-  }
-  .field-label {
-    font-weight: 500;
-    color: #94a3b8;
-    width: 40%;
-    text-transform: capitalize;
-  }
-  .field-value {
-    color: #e2e8f0;
-    word-break: break-word;
-  }
-  .schema-table tr:not(:last-child) {
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-  }
-</style>
-`;
-}
-
-
-
 
 
 // --- File: main.js ---

@@ -4,9 +4,7 @@ const { execSync } = require('child_process');
 
 const projectRoot = path.resolve(__dirname, '..');
 const packageJsonPath = path.join(projectRoot, 'package.json');
-const srcMainJsPath = path.join(projectRoot, 'src', 'main.js');
 const distDir = path.join(projectRoot, 'dist');
-const distMainJsPath = path.join(distDir, 'main.js');
 
 // 1. Read and increase version number in package.json
 const pkg = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
@@ -18,55 +16,13 @@ pkg.version = newVersion;
 fs.writeFileSync(packageJsonPath, JSON.stringify(pkg, null, 2) + '\n', 'utf8');
 console.log(`Increased package.json version to ${newVersion}`);
 
-// 2. Bundle src files into dist/dist.js and clean up old files
-if (!fs.existsSync(distDir)) {
-  fs.mkdirSync(distDir, { recursive: true });
-}
-
-// Clean up existing JS files in dist
-const distFiles = fs.readdirSync(distDir);
-distFiles.forEach(file => {
-  if (file.endsWith('.js')) {
-    fs.unlinkSync(path.join(distDir, file));
-  }
-});
-
-// Read and sort source files (putting main.js last)
-const files = fs.readdirSync(path.join(projectRoot, 'src'))
-  .filter(file => file.endsWith('.js'));
-
-files.sort((a, b) => {
-  if (a === 'main.js') return 1;
-  if (b === 'main.js') return -1;
-  return a.localeCompare(b);
-});
-
-let bundledContent = `// Version: ${newVersion}\n`;
-
-files.forEach(file => {
-  const filePath = path.join(projectRoot, 'src', file);
-  const content = fs.readFileSync(filePath, 'utf8');
-  bundledContent += `\n// --- File: ${file} ---\n` + content + '\n';
-  console.log(`Bundled src/${file}`);
-});
-
-const distBundlePath = path.join(distDir, 'dist.js');
-fs.writeFileSync(distBundlePath, bundledContent, 'utf8');
-console.log(`Saved bundle to dist/dist.js`);
-
-// Copy .clasp.json to distDir so clasp uses distDir as its project root
-const claspJsonSrc = path.join(projectRoot, '.clasp.json');
-const claspJsonDist = path.join(distDir, '.clasp.json');
-if (fs.existsSync(claspJsonSrc)) {
-  fs.copyFileSync(claspJsonSrc, claspJsonDist);
-}
-
-// Copy template.html to distDir so clasp pushes it
-const templateSrc = path.join(projectRoot, 'src', 'template.html');
-const templateDist = path.join(distDir, 'template.html');
-if (fs.existsSync(templateSrc)) {
-  fs.copyFileSync(templateSrc, templateDist);
-  console.log('Copied src/template.html to dist/template.html');
+// 2. Build the project
+console.log('Building bundle...');
+try {
+  execSync('node scripts/build.js', { stdio: 'inherit', cwd: projectRoot });
+} catch (error) {
+  console.error('Build step failed:', error.message);
+  process.exit(1);
 }
 
 // 3. Push to Google Apps Script via clasp

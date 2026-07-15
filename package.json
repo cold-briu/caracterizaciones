@@ -1,9 +1,10 @@
 {
   "name": "caracterizaciones",
-  "version": "1.0.23",
+  "version": "1.0.27",
   "description": "Google Apps Script project for caracterizaciones",
   "main": "dist/dist.js",
   "scripts": {
+    "build": "node scripts/build.js",
     "deploy": "node scripts/deploy.js"
   },
   "author": "",

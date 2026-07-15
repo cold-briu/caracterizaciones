@@ -96,13 +96,8 @@ function createHtmlTemplateFromSchema(schemas, mergedEntry) {
     return "";
   }
 
-  // Load the template from the separate HTML file pushed to Google Apps Script
-  let template = "";
-  try {
-    template = HtmlService.createHtmlOutputFromFile('template').getContent();
-  } catch (e) {
-    throw new Error("Failed to load template.html via HtmlService: " + e.message);
-  }
+  // Load the template (injected at build time from src/template.html)
+  let template = `__TEMPLATE_HTML_CONTENT__`;
 
   // Replace placeholders dynamically for every key in the merged record
   for (const [key, val] of Object.entries(mergedEntry)) {
@@ -127,7 +122,9 @@ function createHtmlTemplateFromSchema(schemas, mergedEntry) {
  * @returns {GoogleAppsScript.Drive.File} The created PDF file.
  */
 function saveHtmlAsPdf(htmlContent, mergedEntry, fileNameKey, folder) {
-  const fileName = String(mergedEntry[fileNameKey] || 'document').trim();
+  const name = String(mergedEntry.Nombre || '').trim();
+  const doc = String(mergedEntry[fileNameKey] || '').trim();
+  const fileName = name && doc ? `${name}_${doc}` : (name || doc || 'document');
   const htmlBlob = Utilities.newBlob(htmlContent, 'text/html', `${fileName}.html`);
   const pdfBlob = htmlBlob.getAs('application/pdf').setName(`${fileName}.pdf`);
   return folder.createFile(pdfBlob);
