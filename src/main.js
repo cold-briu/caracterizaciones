@@ -9,4 +9,16 @@ function generateResultsPDF() {
 
     const interviewRecords = mapRowsToObjects(interviewData, CONFIG.sheets.demografica.columns);
     const physicalRecords = mapRowsToObjects(physicalData, CONFIG.sheets.fisica.columns);
+
+    const mergedRecords = [];
+    for (const interview of interviewRecords) {
+        for (const physical of physicalRecords) {
+            const merged = mergeObjectsByKey(interview, physical, CONFIG.foreignKey);
+            if (merged) {
+                mergedRecords.push(merged);
+            }
+        }
+    }
+
+    console.log(JSON.stringify(mergedRecords, null, 2));
 }

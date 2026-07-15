@@ -1,4 +1,5 @@
 const CONFIG = {
+  foreignKey: "documento",
   sheets: {
     demografica: {
       name: "demografica",
@@ -6,7 +7,7 @@ const CONFIG = {
         marcaTemporal: 0,
         Nombre: 1,
         Edad: 2,
-        Documento: 3
+        documento: 3
       }
     },
     fisica: {
@@ -19,3 +20,5 @@ const CONFIG = {
     }
   }
 };
+
+

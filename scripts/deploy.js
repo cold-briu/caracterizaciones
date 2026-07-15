@@ -18,28 +18,48 @@ pkg.version = newVersion;
 fs.writeFileSync(packageJsonPath, JSON.stringify(pkg, null, 2) + '\n', 'utf8');
 console.log(`Increased package.json version to ${newVersion}`);
 
-// 2. Copy src files to dist and prepend version number to main.js
+// 2. Bundle src files into dist/dist.js and clean up old files
 if (!fs.existsSync(distDir)) {
   fs.mkdirSync(distDir, { recursive: true });
 }
 
-const files = fs.readdirSync(path.join(projectRoot, 'src'));
-files.forEach(file => {
+// Clean up existing JS files in dist
+const distFiles = fs.readdirSync(distDir);
+distFiles.forEach(file => {
   if (file.endsWith('.js')) {
-    const srcFilePath = path.join(projectRoot, 'src', file);
-    const distFilePath = path.join(distDir, file);
-    let content = fs.readFileSync(srcFilePath, 'utf8');
-    
-    if (file === 'main.js') {
-      content = `// Version: ${newVersion}\n` + content;
-      console.log(`Copied src/main.js to dist/main.js with prepended version ${newVersion}`);
-    } else {
-      console.log(`Copied src/${file} to dist/${file}`);
-    }
-    
-    fs.writeFileSync(distFilePath, content, 'utf8');
+    fs.unlinkSync(path.join(distDir, file));
   }
 });
+
+// Read and sort source files (putting main.js last)
+const files = fs.readdirSync(path.join(projectRoot, 'src'))
+  .filter(file => file.endsWith('.js'));
+
+files.sort((a, b) => {
+  if (a === 'main.js') return 1;
+  if (b === 'main.js') return -1;
+  return a.localeCompare(b);
+});
+
+let bundledContent = `// Version: ${newVersion}\n`;
+
+files.forEach(file => {
+  const filePath = path.join(projectRoot, 'src', file);
+  const content = fs.readFileSync(filePath, 'utf8');
+  bundledContent += `\n// --- File: ${file} ---\n` + content + '\n';
+  console.log(`Bundled src/${file}`);
+});
+
+const distBundlePath = path.join(distDir, 'dist.js');
+fs.writeFileSync(distBundlePath, bundledContent, 'utf8');
+console.log(`Saved bundle to dist/dist.js`);
+
+// Copy .clasp.json to distDir so clasp uses distDir as its project root
+const claspJsonSrc = path.join(projectRoot, '.clasp.json');
+const claspJsonDist = path.join(distDir, '.clasp.json');
+if (fs.existsSync(claspJsonSrc)) {
+  fs.copyFileSync(claspJsonSrc, claspJsonDist);
+}
 
 // 3. Push to Google Apps Script via clasp
 console.log('Pushing to Google Apps Script via clasp...');
