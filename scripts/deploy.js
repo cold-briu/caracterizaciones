@@ -18,21 +18,28 @@ pkg.version = newVersion;
 fs.writeFileSync(packageJsonPath, JSON.stringify(pkg, null, 2) + '\n', 'utf8');
 console.log(`Increased package.json version to ${newVersion}`);
 
-// 2. Create copy of src/main.js into dist/main.js and prepend version number
+// 2. Copy src files to dist and prepend version number to main.js
 if (!fs.existsSync(distDir)) {
   fs.mkdirSync(distDir, { recursive: true });
 }
 
-let mainContent = '';
-if (fs.existsSync(srcMainJsPath)) {
-  mainContent = fs.readFileSync(srcMainJsPath, 'utf8');
-} else {
-  console.warn('Warning: src/main.js does not exist.');
-}
-
-const distContent = `// Version: ${newVersion}\n` + mainContent;
-fs.writeFileSync(distMainJsPath, distContent, 'utf8');
-console.log(`Copied src/main.js to dist/main.js with prepended version ${newVersion}`);
+const files = fs.readdirSync(path.join(projectRoot, 'src'));
+files.forEach(file => {
+  if (file.endsWith('.js')) {
+    const srcFilePath = path.join(projectRoot, 'src', file);
+    const distFilePath = path.join(distDir, file);
+    let content = fs.readFileSync(srcFilePath, 'utf8');
+    
+    if (file === 'main.js') {
+      content = `// Version: ${newVersion}\n` + content;
+      console.log(`Copied src/main.js to dist/main.js with prepended version ${newVersion}`);
+    } else {
+      console.log(`Copied src/${file} to dist/${file}`);
+    }
+    
+    fs.writeFileSync(distFilePath, content, 'utf8');
+  }
+});
 
 // 3. Push to Google Apps Script via clasp
 console.log('Pushing to Google Apps Script via clasp...');
