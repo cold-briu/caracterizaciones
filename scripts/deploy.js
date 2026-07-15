@@ -61,6 +61,14 @@ if (fs.existsSync(claspJsonSrc)) {
   fs.copyFileSync(claspJsonSrc, claspJsonDist);
 }
 
+// Copy template.html to distDir so clasp pushes it
+const templateSrc = path.join(projectRoot, 'src', 'template.html');
+const templateDist = path.join(distDir, 'template.html');
+if (fs.existsSync(templateSrc)) {
+  fs.copyFileSync(templateSrc, templateDist);
+  console.log('Copied src/template.html to dist/template.html');
+}
+
 // 3. Push to Google Apps Script via clasp
 console.log('Pushing to Google Apps Script via clasp...');
 try {

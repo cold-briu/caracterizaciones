@@ -1,5 +1,7 @@
 const CONFIG = {
   foreignKey: "documento",
+  masterResultsDirName: "Resultados",
+  dailyResultsDirName: "Resultados_",
   sheets: {
     demografica: {
       name: "demografica",
@@ -20,5 +22,7 @@ const CONFIG = {
     }
   }
 };
+
+
 
 

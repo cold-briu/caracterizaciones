@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Reporte {{Nombre}}</title>
+  <style>
+    body {
+      font-family: 'Outfit', 'Inter', 'Roboto', sans-serif;
+      background-color: #ffffff;
+      color: #1e293b;
+      margin: 40px;
+      line-height: 1.6;
+    }
+    h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 5px;
+    }
+    h2 {
+      font-size: 1.25rem;
+      font-weight: 500;
+      color: #64748b;
+      margin-top: 0;
+      margin-bottom: 30px;
+    }
+    .report-table {
+      width: 100%;
+      max-width: 600px;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    .report-table th,
+    .report-table td {
+      padding: 12px 0;
+      text-align: left;
+      border-bottom: 1px solid #e2e8f0;
+      font-size: 0.95rem;
+    }
+    .report-table th {
+      font-weight: 600;
+      color: #475569;
+      width: 40%;
+    }
+    .report-table td {
+      color: #0f172a;
+    }
+  </style>
+</head>
+<body>
+  <h1>Reporte {{Nombre}}</h1>
+  <h2>resultados:</h2>
+
+  <table class="report-table">
+    <tbody>
+      <tr>
+        <th>Marca Temporal</th>
+        <td>{{marcaTemporal}}</td>
+      </tr>
+      <tr>
+        <th>Documento</th>
+        <td>{{documento}}</td>
+      </tr>
+      <tr>
+        <th>Edad</th>
+        <td>{{Edad}}</td>
+      </tr>
+      <tr>
+        <th>Umbral</th>
+        <td>{{umbral}}</td>
+      </tr>
+    </tbody>
+  </table>
+</body>
+</html>
