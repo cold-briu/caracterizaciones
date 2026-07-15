@@ -42,12 +42,16 @@ npm run build
 ```
 This generates the final bundled code inside `dist/dist.js` and copies `.clasp.json` to the `dist/` directory.
 
-### 3. Deploying
-To increment the package version, run the build, and push to Google Apps Script in one command:
+### 3. Deploying & Versioning
+To deploy updates to Google Apps Script, run the deployment script:
 ```bash
 npm run deploy
 ```
-This increments the patch version in `package.json`, runs `npm run build`, and then calls `clasp push -f` from the `dist/` directory to deploy the code.
+
+The deployment script ([deploy.js](file:///home/sandusky/repos/caracterizaciones/scripts/deploy.js)) automates the following steps:
+1. **Auto-Increment Version**: Reads [package.json](file:///home/sandusky/repos/caracterizaciones/package.json), parses the semantic version (`major.minor.patch`), and increments the `patch` version (e.g., `1.0.27` becomes `1.0.28`). The updated version is then written back to `package.json`.
+2. **Build and Inject**: Executes the build script ([build.js](file:///home/sandusky/repos/caracterizaciones/scripts/build.js)). The build script writes the version number as a comment at the top of the generated bundle (`// Version: X.Y.Z` in `dist/dist.js`).
+3. **Clasp Push**: Executes `clasp push -f` from the `dist/` directory, pushing the latest bundled code up to the linked Google Apps Script project.
 
 ## Manual Updates Upon Schema Changes
 
