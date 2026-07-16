@@ -2,136 +2,350 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>Reporte Clínico - {{Nombre}}</title>
+  <title>Factores asociados a la hipoacusia</title>
   <style>
     body {
-      font-family: 'Inter', 'Roboto', Helvetica, Arial, sans-serif;
+      font-family: Arial, Helvetica, sans-serif;
       background-color: #ffffff;
-      color: #1e293b;
-      margin: 40px;
-      line-height: 1.6;
+      color: #1a202c;
+      margin: 20px;
+      line-height: 1.4;
+      font-size: 13px;
+      -webkit-print-color-adjust: exact;
     }
-    .header {
-      border-bottom: 2px solid #0f172a;
-      padding-bottom: 12px;
-      margin-bottom: 24px;
-    }
-    .header-title {
-      font-size: 1.5rem;
-      font-weight: 700;
-      letter-spacing: 0.05em;
-      color: #0f172a;
-      text-transform: uppercase;
-      margin: 0 0 5px 0;
-    }
-    .header-subtitle {
-      font-size: 0.9rem;
-      color: #64748b;
-      margin: 0;
-      text-transform: uppercase;
-      letter-spacing: 0.02em;
-    }
-    .section-title {
-      font-size: 1.1rem;
-      font-weight: 600;
-      color: #0f172a;
-      margin-top: 24px;
-      margin-bottom: 12px;
-      border-bottom: 1px solid #e2e8f0;
-      padding-bottom: 6px;
-      text-transform: uppercase;
-      letter-spacing: 0.03em;
-    }
-    .patient-info {
-      display: table;
-      width: 100%;
-      margin-bottom: 20px;
-    }
-    .info-row {
-      display: table-row;
-    }
-    .info-label {
-      display: table-cell;
-      font-weight: 600;
-      color: #475569;
-      padding: 6px 0;
-      width: 25%;
-    }
-    .info-value {
-      display: table-cell;
-      color: #0f172a;
-      padding: 6px 0;
-    }
-    .results-table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 10px;
-    }
-    .results-table th,
-    .results-table td {
-      padding: 10px 0;
-      text-align: left;
-      border-bottom: 1px solid #f1f5f9;
-      font-size: 0.95rem;
-    }
-    .results-table th {
-      font-weight: 600;
-      color: #475569;
-      border-bottom: 2px solid #cbd5e1;
-    }
-    .results-table td {
-      color: #0f172a;
-    }
-    .footer {
-      margin-top: 80px;
-      border-top: 1px solid #e2e8f0;
-      padding-top: 12px;
-      font-size: 0.75rem;
-      color: #94a3b8;
+    
+    .header-container {
       text-align: center;
+      margin-bottom: 20px;
+      width: 700px;
+    }
+    
+    .header-title {
+      font-size: 15px;
+      font-weight: bold;
+      color: #0d1b2a;
+      line-height: 1.5;
+      margin: 0;
+    }
+    
+    .section-container {
+      margin-bottom: 18px;
+      width: 700px;
+    }
+    
+    .section-title {
+      font-size: 13px;
+      font-weight: bold;
+      color: #1d4ed8;
+      border-bottom: 2px solid #1e3a8a;
+      padding-bottom: 3px;
+      margin-bottom: 8px;
+      width: 700px;
+    }
+    
+    /* Personal Data Grid Table */
+    .personal-data-table {
+      width: 700px;
+      border-collapse: collapse;
+      border: 1px solid #cbd5e1;
+      margin-bottom: 10px;
+    }
+    
+    .personal-data-table td {
+      border: 1px solid #cbd5e1;
+      padding: 8px;
+      vertical-align: middle;
+      font-size: 12.5px;
+    }
+    
+    .field-label {
+      font-weight: bold;
+      color: #1a202c;
+    }
+    
+    .field-value {
+      font-family: monospace;
+      font-size: 13px;
+      color: #1e3a8a;
+      padding-left: 4px;
+    }
+
+    .fill-line {
+      border-bottom: 1px solid #cbd5e1;
+      display: inline-block;
+      height: 15px;
+    }
+    
+    /* Evaluation Data Tables */
+    .evaluation-table {
+      width: 700px;
+      border-collapse: collapse;
+      margin-top: 5px;
+      margin-bottom: 5px;
+      border: 1px solid #cbd5e1;
+    }
+    
+    .evaluation-table th,
+    .evaluation-table td {
+      border: 1px solid #cbd5e1;
+      padding: 8px 10px;
+      font-size: 12.5px;
+      height: 24px;
+      vertical-align: middle;
+    }
+    
+    .evaluation-table th {
+      font-weight: bold;
+      text-align: center;
+      color: #1a202c;
+    }
+    
+    .col-evaluado {
+      background-color: #f1f5f9;
+      font-weight: bold;
+      width: 350px;
+    }
+    
+    .col-normal {
+      background-color: #ecfdf5;
+      text-align: center;
+      width: 175px;
+    }
+    
+    .col-normal-header {
+      background-color: #d1fae5;
+      color: #065f46;
+      width: 175px;
+    }
+    
+    .col-anormal {
+      background-color: #fef2f2;
+      text-align: center;
+      width: 175px;
+    }
+    
+    .col-anormal-header {
+      background-color: #fee2e2;
+      color: #991b1b;
+      width: 175px;
+    }
+    
+    /* Small check box inside evaluation table cells */
+    .checkbox-box {
+      display: block;
+      width: 16px;
+      height: 16px;
+      border: 1.5px solid #4a5568;
+      background-color: #ffffff;
+      margin: 0 auto;
+    }
+    
+    /* Ruled lines for observations */
+    .observations-container {
+      margin-top: 5px;
+      width: 700px;
+    }
+    
+    .observations-label {
+      font-weight: bold;
+      font-size: 12px;
+      color: #1a202c;
+      margin-bottom: 4px;
+    }
+    
+    .ruled-table {
+      width: 700px;
+      border-collapse: collapse;
+      border: none;
+      margin-top: 5px;
+    }
+    
+    .ruled-table td {
+      border: none;
+      border-bottom: 1px solid #cbd5e1;
+      height: 24px;
+      font-size: 13px;
+      color: #1e3a8a;
+      vertical-align: bottom;
+      padding: 0 5px;
+    }
+    
+    /* Suggested conduct checkboxes */
+    .conducta-container {
+      margin-top: 10px;
+      font-size: 12.5px;
+      width: 700px;
+    }
+    
+    .conducta-title {
+      font-weight: bold;
+      margin-bottom: 6px;
+    }
+    
+    .conducta-option {
+      margin-bottom: 4px;
+    }
+    
+    .checkbox-placeholder {
+      font-family: monospace;
+      font-weight: bold;
+      color: #1e3a8a;
     }
   </style>
 </head>
 <body>
-  <div class="header">
-    <h1 class="header-title">Informe de Resultados</h1>
-    <h2 class="header-subtitle">Evaluación de Caracterización</h2>
+
+  <!-- Header Title -->
+  <div class="header-container">
+    <h1 class="header-title">
+      Factores asociados a la hipoacusia en estudiantes de una Institución Educativa del municipio de El Retiro,<br>
+      Antioquia para el año 2026
+    </h1>
   </div>
 
-  <div class="section-title">Datos del Paciente</div>
-  <div class="patient-info">
-    <div class="info-row">
-      <div class="info-label">Nombre completo:</div>
-      <div class="info-value">{{Nombre}}</div>
-    </div>
-    <div class="info-row">
-      <div class="info-label">Documento:</div>
-      <div class="info-value">{{documento}}</div>
-    </div>
-    <div class="info-row">
-      <div class="info-label">Edad:</div>
-      <div class="info-value">{{Edad}} años</div>
-    </div>
-  </div>
-
-  <div class="section-title">Resultados de la Evaluación</div>
-  <table class="results-table">
-    <thead>
+  <!-- 1. Datos Personales del Estudiante -->
+  <div class="section-container">
+    <div class="section-title">1. Datos Personales del Estudiante</div>
+    <table class="personal-data-table">
       <tr>
-        <th>Parámetro Evaluado</th>
-        <th>Resultado</th>
+        <td colspan="8" style="width: 466px;">
+          <span class="field-label">Nombre completo:</span>
+          <span class="field-value">{{Nombre}}</span>
+        </td>
+        <td colspan="4" style="width: 234px;">
+          <span class="field-label">Fecha:</span>
+          <span class="field-value">{{marcaTemporal}}</span>
+        </td>
       </tr>
-    </thead>
-    <tbody>
       <tr>
-        <td>Umbral de respuesta</td>
-        <td>{{umbral}}</td>
+        <td colspan="5" style="width: 290px;">
+          <span class="field-label">Documento de identidad:</span>
+          <span class="field-value">{{documento}}</span>
+        </td>
+        <td colspan="3" style="width: 176px;">
+          <span class="field-label">Edad:</span>
+          <span class="field-value">{{Edad}}</span> <span class="field-label">años</span>
+        </td>
+        <td colspan="4" style="width: 234px;">
+          <span class="field-label">Género:</span>
+          <span class="checkbox-placeholder">[ &nbsp; ]</span> F &nbsp;
+          <span class="checkbox-placeholder">[ &nbsp; ]</span> M
+        </td>
       </tr>
-    </tbody>
-  </table>
-
-  <div class="footer">
-    Documento generado automáticamente • Marca temporal: {{marcaTemporal}}
+      <tr>
+        <td colspan="8" style="width: 466px;">
+          <span class="field-label">Colegio:</span>
+          <span class="fill-line" style="width: 320px;"></span>
+        </td>
+        <td colspan="4" style="width: 234px;">
+          <span class="field-label">Grado/Grp:</span>
+          <span class="fill-line" style="width: 100px;"></span>
+        </td>
+      </tr>
+      <tr>
+        <td colspan="8" style="width: 466px;">
+          <span class="field-label">Nombre y contacto acudiente del estudiante:</span>
+          <span class="fill-line" style="width: 250px;"></span>
+          <div style="margin-top: 6px;">
+            <span class="field-label">Teléfono de contacto:</span>
+            <span class="fill-line" style="width: 200px;"></span>
+          </div>
+        </td>
+        <td colspan="4" style="width: 234px; vertical-align: top;">
+          <span class="field-label">Investigación:</span><br>
+          <span class="checkbox-placeholder">[ &nbsp; ]</span> Sí firmó el consentimiento informado.
+        </td>
+      </tr>
+    </table>
   </div>
+
+  <!-- 2. Evaluación de Otoscopia (Hallazgos y Anormalidades) -->
+  <div class="section-container">
+    <div class="section-title">2. Evaluación de Otoscopia (Hallazgos y Anormalidades)</div>
+    <table class="evaluation-table">
+      <thead>
+        <tr>
+          <th class="col-evaluado">OÍDO EVALUADO</th>
+          <th class="col-normal-header">Normal</th>
+          <th class="col-anormal-header">Anormal</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="col-evaluado">Oído Derecho (OD)</td>
+          <td class="col-normal"><span class="checkbox-box"></span></td>
+          <td class="col-anormal"><span class="checkbox-box"></span></td>
+        </tr>
+        <tr>
+          <td class="col-evaluado">Oído Izquierdo (OI)</td>
+          <td class="col-normal"><span class="checkbox-box"></span></td>
+          <td class="col-anormal"><span class="checkbox-box"></span></td>
+        </tr>
+      </tbody>
+    </table>
+    
+    <!-- Observaciones de Otoscopia -->
+    <div class="observations-container">
+      <div class="section-title" style="border: none; padding: 0; margin-top: 10px; margin-bottom: 4px;">Observaciones de Otoscopia (Hallazgos y Anormalidades)</div>
+      <div class="observations-label">Observaciones Clínicas / De Investigación:</div>
+      <table class="ruled-table">
+        <tr><td style="font-family: monospace;">&nbsp;</td></tr>
+        <tr><td>&nbsp;</td></tr>
+        <tr><td>&nbsp;</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- 3. Registro de Resultados del Tamizaje Auditivo -->
+  <div class="section-container">
+    <div class="section-title">3. Registro de Resultados del Tamizaje Auditivo</div>
+    <table class="evaluation-table">
+      <thead>
+        <tr>
+          <th class="col-evaluado">OÍDO EVALUADO</th>
+          <th class="col-normal-header">PASA (Audición Adecuada)</th>
+          <th class="col-anormal-header">NO PASA (Sospecha / Remisión)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="col-evaluado">Oído Derecho (OD)</td>
+          <td class="col-normal"><span class="checkbox-box"></span></td>
+          <td class="col-anormal"><span class="checkbox-box"></span></td>
+        </tr>
+        <tr>
+          <td class="col-evaluado">Oído Izquierdo (OI)</td>
+          <td class="col-normal"><span class="checkbox-box"></span></td>
+          <td class="col-anormal"><span class="checkbox-box"></span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 4. Observaciones y Plan de Acción -->
+  <div class="section-container">
+    <div class="section-title">4. Observaciones y Plan de Acción</div>
+    <div class="observations-label">Observaciones Clínicas / De Investigación:</div>
+    <table class="ruled-table">
+      <tr><td style="font-family: monospace; color: #1e3a8a;">{{umbral}}</td></tr>
+      <tr><td>&nbsp;</td></tr>
+      <tr><td>&nbsp;</td></tr>
+    </table>
+    
+    <!-- Conducta Sugerida -->
+    <div class="conducta-container">
+      <div class="conducta-title">Conducta Sugerida:</div>
+      <div class="conducta-option">
+        <span class="checkbox-placeholder">[ &nbsp; ]</span> Sin hallazgos de alerta. Seguimiento escolar regular.
+      </div>
+      <div class="conducta-option">
+        <span class="checkbox-placeholder">[ &nbsp; ]</span> Remisión médica prioritaria (Oído obstruido, dolor, inflamación, supuración).
+      </div>
+      <div class="conducta-option">
+        <span class="checkbox-placeholder">[ &nbsp; ]</span> Remisión formal a valoración audiológica integral (Criterio "No Pasa" en tamizaje).
+      </div>
+    </div>
+  </div>
+
 </body>
 </html>
