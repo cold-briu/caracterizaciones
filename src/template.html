@@ -12,6 +12,7 @@
       line-height: 1.4;
       font-size: 13px;
       -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
     }
     
     .header-container {
@@ -228,32 +229,31 @@
         </td>
         <td colspan="4" style="width: 234px;">
           <span class="field-label">Género:</span>
-          <span class="checkbox-placeholder">[ &nbsp; ]</span> F &nbsp;
-          <span class="checkbox-placeholder">[ &nbsp; ]</span> M
+          <span class="field-value">{{genero}}</span>
         </td>
       </tr>
       <tr>
         <td colspan="8" style="width: 466px;">
           <span class="field-label">Colegio:</span>
-          <span class="fill-line" style="width: 320px;"></span>
+          <span class="field-value">{{colegio}}</span>
         </td>
         <td colspan="4" style="width: 234px;">
           <span class="field-label">Grado/Grp:</span>
-          <span class="fill-line" style="width: 100px;"></span>
+          <span class="field-value">{{grado}}</span>
         </td>
       </tr>
       <tr>
         <td colspan="8" style="width: 466px;">
           <span class="field-label">Nombre y contacto acudiente del estudiante:</span>
-          <span class="fill-line" style="width: 250px;"></span>
+          <span class="field-value">{{acudiente}}</span>
           <div style="margin-top: 6px;">
             <span class="field-label">Teléfono de contacto:</span>
-            <span class="fill-line" style="width: 200px;"></span>
+            <span class="field-value">{{telefono}}</span>
           </div>
         </td>
         <td colspan="4" style="width: 234px; vertical-align: top;">
           <span class="field-label">Investigación:</span><br>
-          <span class="checkbox-placeholder">[ &nbsp; ]</span> Sí firmó el consentimiento informado.
+          <span class="field-value">{{investigacion}}</span>
         </td>
       </tr>
     </table>

@@ -125,7 +125,15 @@ function saveHtmlAsPdf(htmlContent, mergedEntry, fileNameKey, folder) {
   const name = String(mergedEntry.nombre || '').trim();
   const doc = String(mergedEntry[fileNameKey] || '').trim();
   const fileName = name && doc ? `${name}_${doc}` : (name || doc || 'document');
+  const pdfName = `${fileName}.pdf`;
+
+  // Overwrite if file exists
+  const existingFiles = folder.getFilesByName(pdfName);
+  while (existingFiles.hasNext()) {
+    existingFiles.next().setTrashed(true);
+  }
+
   const htmlBlob = Utilities.newBlob(htmlContent, 'text/html', `${fileName}.html`);
-  const pdfBlob = htmlBlob.getAs('application/pdf').setName(`${fileName}.pdf`);
+  const pdfBlob = htmlBlob.getAs('application/pdf').setName(pdfName);
   return folder.createFile(pdfBlob);
 }

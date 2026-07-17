@@ -1,4 +1,4 @@
-// Version: 1.0.33
+// Version: 1.0.40
 
 // --- File: config.js ---
 const CONFIG = {
@@ -12,7 +12,13 @@ const CONFIG = {
         marcatemporal: 0,
         nombre: 7,
         edad: 9,
-        documento: 8
+        documento: 8,
+        genero: 10,
+        colegio: 21,
+        grado: 22,
+        acudiente: 1,
+        telefono: 2,
+        investigacion: 18
       }
     },
     fisica: {
@@ -145,6 +151,7 @@ function createHtmlTemplateFromSchema(schemas, mergedEntry) {
       line-height: 1.4;
       font-size: 13px;
       -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
     }
     
     .header-container {
@@ -361,32 +368,31 @@ function createHtmlTemplateFromSchema(schemas, mergedEntry) {
         </td>
         <td colspan="4" style="width: 234px;">
           <span class="field-label">Género:</span>
-          <span class="checkbox-placeholder">[ &nbsp; ]</span> F &nbsp;
-          <span class="checkbox-placeholder">[ &nbsp; ]</span> M
+          <span class="field-value">{{genero}}</span>
         </td>
       </tr>
       <tr>
         <td colspan="8" style="width: 466px;">
           <span class="field-label">Colegio:</span>
-          <span class="fill-line" style="width: 320px;"></span>
+          <span class="field-value">{{colegio}}</span>
         </td>
         <td colspan="4" style="width: 234px;">
           <span class="field-label">Grado/Grp:</span>
-          <span class="fill-line" style="width: 100px;"></span>
+          <span class="field-value">{{grado}}</span>
         </td>
       </tr>
       <tr>
         <td colspan="8" style="width: 466px;">
           <span class="field-label">Nombre y contacto acudiente del estudiante:</span>
-          <span class="fill-line" style="width: 250px;"></span>
+          <span class="field-value">{{acudiente}}</span>
           <div style="margin-top: 6px;">
             <span class="field-label">Teléfono de contacto:</span>
-            <span class="fill-line" style="width: 200px;"></span>
+            <span class="field-value">{{telefono}}</span>
           </div>
         </td>
         <td colspan="4" style="width: 234px; vertical-align: top;">
           <span class="field-label">Investigación:</span><br>
-          <span class="checkbox-placeholder">[ &nbsp; ]</span> Sí firmó el consentimiento informado.
+          <span class="field-value">{{investigacion}}</span>
         </td>
       </tr>
     </table>
@@ -510,8 +516,16 @@ function saveHtmlAsPdf(htmlContent, mergedEntry, fileNameKey, folder) {
   const name = String(mergedEntry.nombre || '').trim();
   const doc = String(mergedEntry[fileNameKey] || '').trim();
   const fileName = name && doc ? `${name}_${doc}` : (name || doc || 'document');
+  const pdfName = `${fileName}.pdf`;
+
+  // Overwrite if file exists
+  const existingFiles = folder.getFilesByName(pdfName);
+  while (existingFiles.hasNext()) {
+    existingFiles.next().setTrashed(true);
+  }
+
   const htmlBlob = Utilities.newBlob(htmlContent, 'text/html', `${fileName}.html`);
-  const pdfBlob = htmlBlob.getAs('application/pdf').setName(`${fileName}.pdf`);
+  const pdfBlob = htmlBlob.getAs('application/pdf').setName(pdfName);
   return folder.createFile(pdfBlob);
 }
 
