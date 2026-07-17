@@ -156,3 +156,62 @@ function saveHtmlAsPdf(htmlContent, mergedEntry, fileNameKey, folder) {
   const pdfBlob = htmlBlob.getAs('application/pdf').setName(pdfName);
   return folder.createFile(pdfBlob);
 }
+
+/**
+ * Copies a Google Doc template, replaces placeholders with record values, 
+ * converts the doc to PDF, saves it to the target folder, and deletes the temporary copy.
+ * 
+ * @param {string} templateId - The Google Doc template ID.
+ * @param {Object} mergedEntry - The merged record data.
+ * @param {string} fileNameKey - The key name from the merged entry to use as the file name.
+ * @param {GoogleAppsScript.Drive.Folder} folder - The destination Drive folder.
+ * @returns {GoogleAppsScript.Drive.File} The created PDF file.
+ */
+function saveDocTemplateAsPdf(templateId, mergedEntry, fileNameKey, folder) {
+  const name = String(mergedEntry.nombre || '').trim();
+  const docVal = String(mergedEntry[fileNameKey] || '').trim();
+  const fileName = name && docVal ? `${name}_${docVal}` : (name || docVal || 'document');
+  const pdfName = `${fileName}.pdf`;
+
+  // 1. Copy the Template: locate Google Doc template and create a temporary copy
+  const templateFile = DriveApp.getFileById(templateId);
+  const tempFile = templateFile.makeCopy(`temp_${fileName}`, folder);
+
+  try {
+    // 2. Replace Placeholders: open copied document, read body, and replaceText()
+    const doc = DocumentApp.openById(tempFile.getId());
+    const body = doc.getBody();
+
+    for (const [key, val] of Object.entries(mergedEntry)) {
+      const placeholder = `\\{\\{${key}\\}\\}`;
+      let finalVal = val;
+      if (key === 'marcaTemporal') {
+        finalVal = parseMarcaTemporal(finalVal);
+      }
+      const replacement = finalVal !== undefined && finalVal !== null ? String(finalVal) : "";
+      body.replaceText(placeholder, replacement);
+    }
+
+    // Clean unresolved double curly brace placeholders
+    body.replaceText('\\{\\{\\w+\\}\\}', '');
+
+    // 3. Save and Convert: call saveAndClose() to apply changes
+    doc.saveAndClose();
+
+    // Generate the PDF blob
+    const pdfBlob = tempFile.getAs('application/pdf').setName(pdfName);
+
+    // Overwrite existing PDF with the same name in the target folder
+    const existingFiles = folder.getFilesByName(pdfName);
+    while (existingFiles.hasNext()) {
+      existingFiles.next().setTrashed(true);
+    }
+
+    // 4. Save the PDF: createFile() in desired folder
+    const pdfFile = folder.createFile(pdfBlob);
+    return pdfFile;
+  } finally {
+    // 5. Cleanup: Delete or trash the temporary Google Doc copy
+    tempFile.setTrashed(true);
+  }
+}

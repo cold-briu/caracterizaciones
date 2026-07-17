@@ -1,4 +1,6 @@
 const CONFIG = {
+  useGoogleDocTemplate: true,
+  docTemplateId: "FILL_DOC_TEMPLATE_ID",
   foreignKey: "documento",
   masterResultsDirName: "Resultados",
   dailyResultsDirName: "Resultados_",
