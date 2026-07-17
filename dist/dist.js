@@ -1,4 +1,4 @@
-// Version: 1.0.30
+// Version: 1.0.33
 
 // --- File: config.js ---
 const CONFIG = {
@@ -7,18 +7,18 @@ const CONFIG = {
   dailyResultsDirName: "Resultados_",
   sheets: {
     demografica: {
-      name: "demografica",
+      name: "sociodemografica",
       columns: {
-        marcaTemporal: 0,
-        Nombre: 1,
-        Edad: 2,
-        documento: 3
+        marcatemporal: 0,
+        nombre: 7,
+        edad: 9,
+        documento: 8
       }
     },
     fisica: {
       name: "fisica",
       columns: {
-        marcaTemporal: 0,
+        marcatemporal: 0,
         umbral: 1,
         documento: 2
       }
@@ -343,11 +343,11 @@ function createHtmlTemplateFromSchema(schemas, mergedEntry) {
       <tr>
         <td colspan="8" style="width: 466px;">
           <span class="field-label">Nombre completo:</span>
-          <span class="field-value">{{Nombre}}</span>
+          <span class="field-value">{{nombre}}</span>
         </td>
         <td colspan="4" style="width: 234px;">
           <span class="field-label">Fecha:</span>
-          <span class="field-value">{{marcaTemporal}}</span>
+          <span class="field-value">{{marcatemporal}}</span>
         </td>
       </tr>
       <tr>
@@ -357,7 +357,7 @@ function createHtmlTemplateFromSchema(schemas, mergedEntry) {
         </td>
         <td colspan="3" style="width: 176px;">
           <span class="field-label">Edad:</span>
-          <span class="field-value">{{Edad}}</span> <span class="field-label">años</span>
+          <span class="field-value">{{edad}}</span> <span class="field-label">años</span>
         </td>
         <td colspan="4" style="width: 234px;">
           <span class="field-label">Género:</span>
@@ -507,7 +507,7 @@ function createHtmlTemplateFromSchema(schemas, mergedEntry) {
  * @returns {GoogleAppsScript.Drive.File} The created PDF file.
  */
 function saveHtmlAsPdf(htmlContent, mergedEntry, fileNameKey, folder) {
-  const name = String(mergedEntry.Nombre || '').trim();
+  const name = String(mergedEntry.nombre || '').trim();
   const doc = String(mergedEntry[fileNameKey] || '').trim();
   const fileName = name && doc ? `${name}_${doc}` : (name || doc || 'document');
   const htmlBlob = Utilities.newBlob(htmlContent, 'text/html', `${fileName}.html`);

@@ -4,18 +4,18 @@ const CONFIG = {
   dailyResultsDirName: "Resultados_",
   sheets: {
     demografica: {
-      name: "demografica",
+      name: "sociodemografica",
       columns: {
-        marcaTemporal: 0,
-        Nombre: 1,
-        Edad: 2,
-        documento: 3
+        marcatemporal: 0,
+        nombre: 7,
+        edad: 9,
+        documento: 8
       }
     },
     fisica: {
       name: "fisica",
       columns: {
-        marcaTemporal: 0,
+        marcatemporal: 0,
         umbral: 1,
         documento: 2
       }

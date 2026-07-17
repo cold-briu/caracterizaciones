@@ -122,7 +122,7 @@ function createHtmlTemplateFromSchema(schemas, mergedEntry) {
  * @returns {GoogleAppsScript.Drive.File} The created PDF file.
  */
 function saveHtmlAsPdf(htmlContent, mergedEntry, fileNameKey, folder) {
-  const name = String(mergedEntry.Nombre || '').trim();
+  const name = String(mergedEntry.nombre || '').trim();
   const doc = String(mergedEntry[fileNameKey] || '').trim();
   const fileName = name && doc ? `${name}_${doc}` : (name || doc || 'document');
   const htmlBlob = Utilities.newBlob(htmlContent, 'text/html', `${fileName}.html`);
