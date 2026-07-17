@@ -146,10 +146,15 @@ function saveHtmlAsPdf(htmlContent, mergedEntry, fileNameKey, folder) {
   const fileName = name && doc ? `${name}_${doc}` : (name || doc || 'document');
   const pdfName = `${fileName}.pdf`;
 
-  // Overwrite if file exists
+  // Overwrite if file exists, or skip if overwriteResutls is false
   const existingFiles = folder.getFilesByName(pdfName);
-  while (existingFiles.hasNext()) {
-    existingFiles.next().setTrashed(true);
+  if (existingFiles.hasNext()) {
+    if (!CONFIG.overwriteResutls) {
+      return existingFiles.next();
+    }
+    while (existingFiles.hasNext()) {
+      existingFiles.next().setTrashed(true);
+    }
   }
 
   const htmlBlob = Utilities.newBlob(htmlContent, 'text/html', `${fileName}.html`);
@@ -172,6 +177,17 @@ function saveDocTemplateAsPdf(templateId, mergedEntry, fileNameKey, folder) {
   const docVal = String(mergedEntry[fileNameKey] || '').trim();
   const fileName = name && docVal ? `${name}_${docVal}` : (name || docVal || 'document');
   const pdfName = `${fileName}.pdf`;
+
+  // Overwrite if file exists, or skip if overwriteResutls is false
+  const existingFiles = folder.getFilesByName(pdfName);
+  if (existingFiles.hasNext()) {
+    if (!CONFIG.overwriteResutls) {
+      return existingFiles.next();
+    }
+    while (existingFiles.hasNext()) {
+      existingFiles.next().setTrashed(true);
+    }
+  }
 
   // 1. Copy the Template: locate Google Doc template and create a temporary copy
   const templateFile = DriveApp.getFileById(templateId);
@@ -200,12 +216,6 @@ function saveDocTemplateAsPdf(templateId, mergedEntry, fileNameKey, folder) {
 
     // Generate the PDF blob
     const pdfBlob = tempFile.getAs('application/pdf').setName(pdfName);
-
-    // Overwrite existing PDF with the same name in the target folder
-    const existingFiles = folder.getFilesByName(pdfName);
-    while (existingFiles.hasNext()) {
-      existingFiles.next().setTrashed(true);
-    }
 
     // 4. Save the PDF: createFile() in desired folder
     const pdfFile = folder.createFile(pdfBlob);

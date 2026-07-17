@@ -1,6 +1,6 @@
 {
   "name": "caracterizaciones",
-  "version": "1.0.45",
+  "version": "1.0.47",
   "description": "Google Apps Script project for caracterizaciones",
   "main": "dist/dist.js",
   "scripts": {

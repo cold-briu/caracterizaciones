@@ -4,6 +4,7 @@ const CONFIG = {
   foreignKey: "documento",
   masterResultsDirName: "Resultados",
   dailyResultsDirName: "Resultados_",
+  overwriteResutls: true,
   sheets: {
     demografica: {
       name: "sociodemografica",
