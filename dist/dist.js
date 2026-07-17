@@ -1,4 +1,4 @@
-// Version: 1.0.40
+// Version: 1.0.43
 
 // --- File: config.js ---
 const CONFIG = {
@@ -9,7 +9,7 @@ const CONFIG = {
     demografica: {
       name: "sociodemografica",
       columns: {
-        marcatemporal: 0,
+        marcaTemporal: 0,
         nombre: 7,
         edad: 9,
         documento: 8,
@@ -24,7 +24,7 @@ const CONFIG = {
     fisica: {
       name: "fisica",
       columns: {
-        marcatemporal: 0,
+        marcaTemporal: 0,
         umbral: 1,
         documento: 2
       }
@@ -54,6 +54,21 @@ function mapRowsToObjects(data, columnMapping) {
     return record;
   });
 }
+
+/**
+ * Parses a date string like "2022-07-11T13:31:21.547Z" to "11 de Julio de 2022".
+ * 
+ * @param {string} dateStr - The ISO date string.
+ * @returns {string} The formatted Spanish date string.
+ */
+function parseMarcaTemporal(dateStr) {
+  if (!dateStr) return dateStr;
+  const date = new Date(dateStr);
+  if (isNaN(date.getTime())) return dateStr;
+  const months = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+  return `${date.getUTCDate()} de ${months[date.getUTCMonth()]} de ${date.getUTCFullYear()}`;
+}
+
 
 /**
  * Merges two objects if their values for the specified key are identical.
@@ -139,6 +154,7 @@ function createHtmlTemplateFromSchema(schemas, mergedEntry) {
   // Load the template (injected at build time from src/template.html)
   let template = `<!DOCTYPE html>
 <html>
+
 <head>
   <meta charset="utf-8">
   <title>Factores asociados a la hipoacusia</title>
@@ -153,13 +169,13 @@ function createHtmlTemplateFromSchema(schemas, mergedEntry) {
       -webkit-print-color-adjust: exact;
       print-color-adjust: exact;
     }
-    
+
     .header-container {
       text-align: center;
       margin-bottom: 20px;
       width: 700px;
     }
-    
+
     .header-title {
       font-size: 15px;
       font-weight: bold;
@@ -167,12 +183,12 @@ function createHtmlTemplateFromSchema(schemas, mergedEntry) {
       line-height: 1.5;
       margin: 0;
     }
-    
+
     .section-container {
       margin-bottom: 18px;
       width: 700px;
     }
-    
+
     .section-title {
       font-size: 13px;
       font-weight: bold;
@@ -182,7 +198,7 @@ function createHtmlTemplateFromSchema(schemas, mergedEntry) {
       margin-bottom: 8px;
       width: 700px;
     }
-    
+
     /* Personal Data Grid Table */
     .personal-data-table {
       width: 700px;
@@ -190,19 +206,19 @@ function createHtmlTemplateFromSchema(schemas, mergedEntry) {
       border: 1px solid #cbd5e1;
       margin-bottom: 10px;
     }
-    
+
     .personal-data-table td {
       border: 1px solid #cbd5e1;
       padding: 8px;
       vertical-align: middle;
       font-size: 12.5px;
     }
-    
+
     .field-label {
       font-weight: bold;
       color: #1a202c;
     }
-    
+
     .field-value {
       font-family: monospace;
       font-size: 13px;
@@ -215,7 +231,7 @@ function createHtmlTemplateFromSchema(schemas, mergedEntry) {
       display: inline-block;
       height: 15px;
     }
-    
+
     /* Evaluation Data Tables */
     .evaluation-table {
       width: 700px;
@@ -224,7 +240,7 @@ function createHtmlTemplateFromSchema(schemas, mergedEntry) {
       margin-bottom: 5px;
       border: 1px solid #cbd5e1;
     }
-    
+
     .evaluation-table th,
     .evaluation-table td {
       border: 1px solid #cbd5e1;
@@ -233,43 +249,43 @@ function createHtmlTemplateFromSchema(schemas, mergedEntry) {
       height: 24px;
       vertical-align: middle;
     }
-    
+
     .evaluation-table th {
       font-weight: bold;
       text-align: center;
       color: #1a202c;
     }
-    
+
     .col-evaluado {
       background-color: #f1f5f9;
       font-weight: bold;
       width: 350px;
     }
-    
+
     .col-normal {
       background-color: #ecfdf5;
       text-align: center;
       width: 175px;
     }
-    
+
     .col-normal-header {
       background-color: #d1fae5;
       color: #065f46;
       width: 175px;
     }
-    
+
     .col-anormal {
       background-color: #fef2f2;
       text-align: center;
       width: 175px;
     }
-    
+
     .col-anormal-header {
       background-color: #fee2e2;
       color: #991b1b;
       width: 175px;
     }
-    
+
     /* Small check box inside evaluation table cells */
     .checkbox-box {
       display: block;
@@ -279,27 +295,27 @@ function createHtmlTemplateFromSchema(schemas, mergedEntry) {
       background-color: #ffffff;
       margin: 0 auto;
     }
-    
+
     /* Ruled lines for observations */
     .observations-container {
       margin-top: 5px;
       width: 700px;
     }
-    
+
     .observations-label {
       font-weight: bold;
       font-size: 12px;
       color: #1a202c;
       margin-bottom: 4px;
     }
-    
+
     .ruled-table {
       width: 700px;
       border-collapse: collapse;
       border: none;
       margin-top: 5px;
     }
-    
+
     .ruled-table td {
       border: none;
       border-bottom: 1px solid #cbd5e1;
@@ -309,23 +325,23 @@ function createHtmlTemplateFromSchema(schemas, mergedEntry) {
       vertical-align: bottom;
       padding: 0 5px;
     }
-    
+
     /* Suggested conduct checkboxes */
     .conducta-container {
       margin-top: 10px;
       font-size: 12.5px;
       width: 700px;
     }
-    
+
     .conducta-title {
       font-weight: bold;
       margin-bottom: 6px;
     }
-    
+
     .conducta-option {
       margin-bottom: 4px;
     }
-    
+
     .checkbox-placeholder {
       font-family: monospace;
       font-weight: bold;
@@ -333,6 +349,7 @@ function createHtmlTemplateFromSchema(schemas, mergedEntry) {
     }
   </style>
 </head>
+
 <body>
 
   <!-- Header Title -->
@@ -354,7 +371,7 @@ function createHtmlTemplateFromSchema(schemas, mergedEntry) {
         </td>
         <td colspan="4" style="width: 234px;">
           <span class="field-label">Fecha:</span>
-          <span class="field-value">{{marcatemporal}}</span>
+          <span class="field-value">{{marcaTemporal}}</span>
         </td>
       </tr>
       <tr>
@@ -422,15 +439,22 @@ function createHtmlTemplateFromSchema(schemas, mergedEntry) {
         </tr>
       </tbody>
     </table>
-    
+
     <!-- Observaciones de Otoscopia -->
     <div class="observations-container">
-      <div class="section-title" style="border: none; padding: 0; margin-top: 10px; margin-bottom: 4px;">Observaciones de Otoscopia (Hallazgos y Anormalidades)</div>
+      <div class="section-title" style="border: none; padding: 0; margin-top: 10px; margin-bottom: 4px;">Observaciones
+        de Otoscopia (Hallazgos y Anormalidades)</div>
       <div class="observations-label">Observaciones Clínicas / De Investigación:</div>
       <table class="ruled-table">
-        <tr><td style="font-family: monospace;">&nbsp;</td></tr>
-        <tr><td>&nbsp;</td></tr>
-        <tr><td>&nbsp;</td></tr>
+        <tr>
+          <td style="font-family: monospace;">&nbsp;</td>
+        </tr>
+        <tr>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>&nbsp;</td>
+        </tr>
       </table>
     </div>
   </div>
@@ -466,11 +490,17 @@ function createHtmlTemplateFromSchema(schemas, mergedEntry) {
     <div class="section-title">4. Observaciones y Plan de Acción</div>
     <div class="observations-label">Observaciones Clínicas / De Investigación:</div>
     <table class="ruled-table">
-      <tr><td style="font-family: monospace; color: #1e3a8a;">{{umbral}}</td></tr>
-      <tr><td>&nbsp;</td></tr>
-      <tr><td>&nbsp;</td></tr>
+      <tr>
+        <td style="font-family: monospace; color: #1e3a8a;">{{umbral}}</td>
+      </tr>
+      <tr>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>&nbsp;</td>
+      </tr>
     </table>
-    
+
     <!-- Conducta Sugerida -->
     <div class="conducta-container">
       <div class="conducta-title">Conducta Sugerida:</div>
@@ -478,22 +508,28 @@ function createHtmlTemplateFromSchema(schemas, mergedEntry) {
         <span class="checkbox-placeholder">[ &nbsp; ]</span> Sin hallazgos de alerta. Seguimiento escolar regular.
       </div>
       <div class="conducta-option">
-        <span class="checkbox-placeholder">[ &nbsp; ]</span> Remisión médica prioritaria (Oído obstruido, dolor, inflamación, supuración).
+        <span class="checkbox-placeholder">[ &nbsp; ]</span> Remisión médica prioritaria (Oído obstruido, dolor,
+        inflamación, supuración).
       </div>
       <div class="conducta-option">
-        <span class="checkbox-placeholder">[ &nbsp; ]</span> Remisión formal a valoración audiológica integral (Criterio "No Pasa" en tamizaje).
+        <span class="checkbox-placeholder">[ &nbsp; ]</span> Remisión formal a valoración audiológica integral (Criterio
+        "No Pasa" en tamizaje).
       </div>
     </div>
   </div>
 
 </body>
-</html>
-`;
+
+</html>`;
 
   // Replace placeholders dynamically for every key in the merged record
   for (const [key, val] of Object.entries(mergedEntry)) {
     const placeholder = new RegExp(`\\{\\{${key}\\}\\}`, 'g');
-    template = template.replace(placeholder, val !== undefined ? val : "");
+    let finalVal = val;
+    if (key === 'marcaTemporal') {
+      finalVal = parseMarcaTemporal(finalVal);
+    }
+    template = template.replace(placeholder, finalVal !== undefined ? finalVal : "");
   }
 
   // Clean any unresolved double curly brace placeholders

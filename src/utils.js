@@ -16,6 +16,21 @@ function mapRowsToObjects(data, columnMapping) {
 }
 
 /**
+ * Parses a date string like "2022-07-11T13:31:21.547Z" to "11 de Julio de 2022".
+ * 
+ * @param {string} dateStr - The ISO date string.
+ * @returns {string} The formatted Spanish date string.
+ */
+function parseMarcaTemporal(dateStr) {
+  if (!dateStr) return dateStr;
+  const date = new Date(dateStr);
+  if (isNaN(date.getTime())) return dateStr;
+  const months = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+  return `${date.getUTCDate()} de ${months[date.getUTCMonth()]} de ${date.getUTCFullYear()}`;
+}
+
+
+/**
  * Merges two objects if their values for the specified key are identical.
  * 
  * @param {Object} objA - First object.
@@ -102,7 +117,11 @@ function createHtmlTemplateFromSchema(schemas, mergedEntry) {
   // Replace placeholders dynamically for every key in the merged record
   for (const [key, val] of Object.entries(mergedEntry)) {
     const placeholder = new RegExp(`\\{\\{${key}\\}\\}`, 'g');
-    template = template.replace(placeholder, val !== undefined ? val : "");
+    let finalVal = val;
+    if (key === 'marcaTemporal') {
+      finalVal = parseMarcaTemporal(finalVal);
+    }
+    template = template.replace(placeholder, finalVal !== undefined ? finalVal : "");
   }
 
   // Clean any unresolved double curly brace placeholders

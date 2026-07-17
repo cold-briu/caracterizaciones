@@ -6,7 +6,7 @@ const CONFIG = {
     demografica: {
       name: "sociodemografica",
       columns: {
-        marcatemporal: 0,
+        marcaTemporal: 0,
         nombre: 7,
         edad: 9,
         documento: 8,
@@ -21,7 +21,7 @@ const CONFIG = {
     fisica: {
       name: "fisica",
       columns: {
-        marcatemporal: 0,
+        marcaTemporal: 0,
         umbral: 1,
         documento: 2
       }
